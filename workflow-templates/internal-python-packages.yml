@@ -1,0 +1,34 @@
+name: Store python packages behind Arup VPN
+
+on:
+  push:
+    branches: [ $default-branch ]
+    
+env:
+  PROJECT_NAME: 'PLACEHOLDER(PLEASE CHANGE)'
+
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    outputs:
+      packageVersion: ${{ steps.package.outputs.package-version }}
+    steps:
+      - uses: actions/checkout@v3
+        
+      - id: package
+        name: Package this repo
+        uses: actions/actions-composite-arup/python/archive-repo@main
+        with:
+          project-name: ${{ env.PROJECT_NAME }}
+        
+  distribute:
+    runs-on: [self-hosted, linux, packages]
+    needs: [pack]
+    steps:
+      - uses: actions/download-artifact@v3
+      
+      - name: Distribute behind VPN
+        uses: actions/actions-composite-arup/python/distribute-pacakges@main
+        with:
+          project-name: ${{ env.PROJECT_NAME }}
+          package-version: ${{ needs.pack.outputs.packageVersion }}

@@ -1,0 +1,10 @@
+{
+    "name": "Store Python Packages Behind Arup VPN",
+    "description": "Archive this repository and store behind VPN. Requires this repo is enabled for storing packages. Contact a GitHub Owner if you want your repo enabled",
+    "categories": [
+        "Python"
+    ],
+    "filePatterns": [
+        "setup.py"
+    ]
+}
