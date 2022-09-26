@@ -29,7 +29,7 @@ jobs:
       - uses: actions/download-artifact@v3
       
       - name: Distribute behind VPN
-        uses: arup-group/actions-composite-arup/python/distribute-pacakges@main
+        uses: arup-group/actions-composite-arup/python/distribute-packages@main
         with:
           project-name: ${{ env.PROJECT_NAME }}
           package-version: ${{ env.PACKAGE_VERSION }}
