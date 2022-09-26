@@ -20,6 +20,7 @@ jobs:
         uses: actions/actions-composite-arup/python/archive-repo@main
         with:
           project-name: ${{ env.PROJECT_NAME }}
+          package-version: ${{ env.PACKAGE_VERSION }}
         
   distribute:
     runs-on: [self-hosted, linux, packages]
@@ -31,4 +32,4 @@ jobs:
         uses: actions/actions-composite-arup/python/distribute-pacakges@main
         with:
           project-name: ${{ env.PROJECT_NAME }}
-          package-version: ${{ needs.pack.outputs.packageVersion }}
+          package-version: ${{ env.PACKAGE_VERSION }}
