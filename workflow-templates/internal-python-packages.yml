@@ -11,16 +11,23 @@ jobs:
   pack:
     runs-on: ubuntu-latest
     outputs:
-      packageVersion: ${{ steps.package.outputs.package-version }}
+      packageVersion: ${{ steps.version-extract.outputs.version }}
     steps:
       - uses: actions/checkout@v3
+      
+      # Change this logic if you don't have a setup.py file.
+      - name: Get version number
+        id: version-extract
+        run: |
+          version=$(python setup.py --version)
+          echo "::set-output name=version::$version"
         
       - id: package
         name: Package this repo
         uses: arup-group/actions-composite-arup/python/archive-repo@main
         with:
           project-name: ${{ env.PROJECT_NAME }}
-          package-version: ${{ env.PACKAGE_VERSION }}
+          package-version: ${{ steps.version-extract.outputs.version }}
         
   distribute:
     runs-on: [self-hosted, linux, packages]
@@ -32,4 +39,4 @@ jobs:
         uses: arup-group/actions-composite-arup/python/distribute-package@main
         with:
           project-name: ${{ env.PROJECT_NAME }}
-          package-version: ${{ env.PACKAGE_VERSION }}
+          package-version: ${{ needs.pack.outputs.packageVersion }}
