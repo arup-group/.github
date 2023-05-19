@@ -20,7 +20,7 @@ jobs:
         id: version-extract
         run: |
           version=$(python setup.py --version)
-          echo "::set-output name=version::$version"
+          echo "version=$version" >> $GITHUB_OUTPUT
         
       - id: package
         name: Package this repo
