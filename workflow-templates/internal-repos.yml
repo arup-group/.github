@@ -1,0 +1,49 @@
+name: Store repo behind Arup VPN
+
+on:
+  push:
+    branches: [ "master" ]
+    
+env:
+  PROJECT_NAME: 'PLACEHOLDER(PLEASE CHANGE)'
+
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    outputs:
+      packageVersion: ${{ steps.version-extract.outputs.version }}
+    steps:
+      - uses: actions/checkout@v3
+        with: 
+          fetch-depth: 0
+      
+      # Change this logic if you don't have a setup.py file.
+      - name: Get version number
+        id: version-extract
+        run: |
+          echo "::set-output name=version::0.0.1"
+          
+      - name: Checkout
+        uses: actions/checkout@v3
+        with: 
+          fetch-depth: 0
+
+        
+      - name: upload to GitHub workflow
+        uses: actions/upload-artifact@v3
+        with:
+          name: package
+          path: .git
+          retention-days: 1
+        
+  distribute:
+    runs-on: [self-hosted, linux, packages]
+    needs: [pack]
+    steps:
+      - uses: actions/download-artifact@v3
+      
+      - name: Distribute behind VPN
+        uses: arup-group/actions-composite-arup/generic/distribute-repo@main
+        with:
+          project-name: ${{ env.PROJECT_NAME }}
+          package-version: ${{ needs.pack.outputs.packageVersion }}

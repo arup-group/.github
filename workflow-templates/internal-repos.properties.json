@@ -1,0 +1,8 @@
+{
+    "name": "Store Repo Behind Arup VPN",
+    "description": "Distribute this repository internally behind VPN on packages.arup.com/repos/PROJECT_NAME.git. Contact a GitHub Owner if you want your repo enabled",
+    "categories": [
+    ],
+    "filePatterns": [
+    ]
+}
