@@ -12,35 +12,39 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       packageVersion: ${{ steps.version-extract.outputs.version }}
-    steps:
-      - uses: actions/checkout@v3
+    steps:     
+      - name: Checkout
+        uses: actions/checkout@v4
         with: 
-          fetch-depth: 0
-      
-      # Change this logic if you don't have a setup.py file.
-      - name: Get version number
+          fetch-depth: 0  # This ensures we get full git history
+          
+      - name: Get version from git
         id: version-extract
         run: |
-          echo "::set-output name=version::0.0.1"
+          # Option 1: Use latest tag
+          VERSION=$(git describe --tags --always)
+          # Option 2: Use latest tag with fallback format
+          # VERSION=$(git describe --tags --always --dirty=-d)
+          # Option 3: Use short commit hash if no tags
+          # VERSION=$(git rev-parse --short HEAD)
+          # Option 4: Set version manually
+          # VERSION="0.0.1"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT          
           
-      - name: Checkout
-        uses: actions/checkout@v3
-        with: 
-          fetch-depth: 0
-
-        
       - name: upload to GitHub workflow
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # Updated to v4 to match download version
         with:
           name: package
           path: .git
           retention-days: 1
+          if-no-files-found: error  # Changed to error to catch issues early
+          include-hidden-files: true  # Added to ensure .git is included
         
   distribute:
     runs-on: [self-hosted, linux, packages]
     needs: [pack]
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
       
       - name: Distribute behind VPN
         uses: arup-group/actions-composite-arup/generic/distribute-repo@main
